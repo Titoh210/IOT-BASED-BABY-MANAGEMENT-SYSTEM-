@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Baby Monitor with Camera</title> 
+  <style>
+        /* Phone Mockup */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .phone {
+            width: 320px;
+            height: 600px;
+            background: #111;
+            border-radius: 30px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .screen {
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background: #f9f9f9;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            height: 30px;
+            background: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 15px;
+            font-size: 12px;
+        }
+        .app-header {
+            padding: 10px;
+            background: #4a89dc;
+            color: white;
+            text-align: center;
+        }
+        
+        /* Camera Feed */
+        .camera-feed {
+            height: 180px;
+            background: #222;
+            position: relative;
+            overflow: hidden;
+        }
+        .camera-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s;
+        }
+        .camera-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .camera-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .camera-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* Alerts Container */
+        .alerts-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .alert {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .alert.cry { border-color: #e74c3c; }
+        .alert.temp { border-color: #e67e22; }
+        .alert.motion { border-color: #3498db; }
+        .alert.diaper { border-color: #9b59b6; }
+        .alert-time {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .alert-message {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .alert-details {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background: white;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 12px;
+            color: #777;
+            cursor: pointer;
+        }
+        .tab.active {
+            color: #4a89dc;
+            font-weight: bold;
+        }
+        
+        /* Hidden panels */
+        .panel {
+            display: none;
+        }
+        .panel.active {
+            display: block;
+            flex: 1;
+            overflow-y: auto;
+        }
+    </style> 
+ </head> 
+ <body> 
+  <div class="phone"> 
+   <div class="screen"> 
+    <div class="status-bar"> <span>9:41</span> <span>📶 100%</span> 
+    </div> 
+    <div class="app-header"> 
+     <h2>Baby Monitor</h2> 
+    </div> <!-- Camera Feed --> 
+    <div class="camera-feed"> 
+     <img id="cameraImage" class="camera-image" src="https://i.imgur.com/JQ9wDgB.jpg" alt="Live Camera Feed"> 
+     <div class="camera-overlay"> <span>LIVE</span> <span>ESP32-CAM • 720p</span> 
+     </div> 
+     <div class="camera-controls"> <button class="camera-btn" onclick="takeSnapshot()">📸</button> <button class="camera-btn" onclick="toggleNightVision()">🌙</button> 
+     </div> 
+    </div> <!-- Alerts Panel (default view) --> 
+    <div id="alertsPanel" class="panel active"> 
+     <div class="alerts-container" id="alerts"> <!-- Alerts will appear here --> 
+     </div> 
+    </div> <!-- History Panel --> 
+    <div id="historyPanel" class="panel"> 
+     <div style="padding: 15px;"> 
+      <h3>Event History</h3> 
+      <div id="historyLog"></div> 
+     </div> 
+    </div> <!-- Sensors Panel --> 
+    <div id="sensorsPanel" class="panel"> 
+     <div style="padding: 15px;"> 
+      <h3>Sensor Data</h3> 
+      <div id="sensorData"> 
+       <p><strong>Sound Level:</strong> <span id="soundValue">0</span></p> 
+       <p><strong>Temperature:</strong> <span id="tempValue">22.5</span>°C</p> 
+       <p><strong>Humidity:</strong> <span id="humidityValue">45</span>%</p> 
+       <p><strong>Motion:</strong> <span id="motionValue">None</span></p> 
+       <p><strong>Diaper Status:</strong> <span id="diaperValue">Dry</span></p> 
+      </div> <button onclick="refreshSensors()" style="margin-top: 10px;">Refresh Data</button> 
+     </div> 
+    </div> <!-- Tab Bar --> 
+    <div class="tab-bar"> 
+     <div class="tab active" onclick="showPanel('alertsPanel')">
+       Alerts 
+     </div> 
+     <div class="tab" onclick="showPanel('historyPanel')">
+       History 
+     </div> 
+     <div class="tab" onclick="showPanel('sensorsPanel')">
+       Sensors 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <script>
+        // DOM elements
+        const alertsContainer = document.getElementById('alerts');
+        const cameraImage = document.getElementById('cameraImage');
+        const historyLog = document.getElementById('historyLog');
+        
+        // Baby images for camera simulation (rotate through these)
+        const babyImages = [
+            'https://i.imgur.com/JQ9wDgB.jpg', // sleeping
+            'https://i.imgur.com/7WXJZ8P.jpg', // awake
+            'https://i.imgur.com/3Q2Z9Xq.jpg'  // crying
+        ];
+        
+        // Sensor data
+        const sensors = {
+            sound: 0,
+            temperature: 22.5,
+            humidity: 45,
+            motion: false,
+            diaper: false,
+            nightVision: false
+        };
+        
+        // Alert types
+        const alertTypes = [
+            {
+                type: "cry",
+                class: "cry",
+                messages: [
+                    "Baby is crying loudly!",
+                    "Baby needs attention - crying detected",
+                    "Crying sounds detected"
+                ],
+                threshold: 800
+            },
+            {
+                type: "temp",
+                class: "temp",
+                messages: [
+                    "Room too hot! (28°C)",
+                    "Room too cold! (17°C)",
+                    "Temperature fluctuation detected"
+                ],
+                safeRange: [18, 24]
+            },
+            {
+                type: "motion",
+                class: "motion",
+                messages: [
+                    "Unusual movement detected!",
+                    "Baby has changed position",
+                    "Possible rolling over detected"
+                ]
+            },
+            {
+                type: "diaper",
+                class: "diaper",
+                messages: [
+                    "Diaper needs changing!",
+                    "Moisture detected in diaper",
+                    "Diaper wetness alert"
+                ]
+            }
+        ];
+        
+        // Create a new alert
+        function createAlert(type) {
+            const alertType = alertTypes.find(a => a.type === type);
+            const randomMessage = alertType.messages[Math.floor(Math.random() * alertType.messages.length)];
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertType.class}`;
+            alertDiv.innerHTML = `
+                <div class="alert-time">${timeString}</div>
+                <div class="alert-message">${randomMessage}</div>
+                <div class="alert-details">Tap to view details</div>
+            `;
+            
+            alertsContainer.insertBefore(alertDiv, alertsContainer.firstChild);
+            
+            // Add to history
+            addToHistory(randomMessage, timeString);
+            
+            // Notification sound for critical alerts
+            if (type === 'cry' || type === 'motion') {
+                playNotificationSound();
+            }
+            
+            // Change camera image if crying
+            if (type === 'cry') {
+                cameraImage.src = babyImages[2]; // Crying image
+            }
+        }
+        
+        // Add event to history log
+        function addToHistory(message, time) {
+            const entry = document.createElement('div');
+            entry.style.padding = '10px';
+            entry.style.borderBottom = '1px solid #eee';
+            entry.innerHTML = `<strong>${time}</strong>: ${message}`;
+            historyLog.appendChild(entry);
+        }
+        
+        // Play notification sound
+        function playNotificationSound() {
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+            audio.volume = 0.3;
+            audio.play();
+        }
+        
+        // Update sensor displays
+        function updateSensors() {
+            document.getElementById('soundValue').textContent = sensors.sound;
+            document.getElementById('tempValue').textContent = sensors.temperature;
+            document.getElementById('humidityValue').textContent = sensors.humidity;
+            document.getElementById('motionValue').textContent = sensors.motion ? 'Detected' : 'None';
+            document.getElementById('diaperValue').textContent = sensors.diaper ? 'Wet' : 'Dry';
+        }
+        
+        // Simulate sensor data changes
+        function simulateSensorData() {
+            // Random sensor fluctuations
+            sensors.sound = Math.floor(Math.random() * 1200);
+            sensors.temperature = (Math.random() * 5) + 20;
+            sensors.humidity = Math.floor(Math.random() * 30) + 40;
+            
+            // Random events
+            if (Math.random() > 0.7) {
+                sensors.sound = Math.floor(Math.random() * 500) + 800;
+                createAlert('cry');
+            }
+            
+            if (sensors.temperature > 24 || sensors.temperature < 18) {
+                createAlert('temp');
+            }
+            
+            if (Math.random() > 0.8) {
+                sensors.motion = true;
+                createAlert('motion');
+            } else {
+                sensors.motion = false;
+            }
+            
+            if (Math.random() > 0.9) {
+                sensors.diaper = true;
+                createAlert('diaper');
+            } else {
+                sensors.diaper = false;
+            }
+            
+            updateSensors();
+        }
+        
+        // Camera functions
+        function toggleNightVision() {
+            sensors.nightVision = !sensors.nightVision;
+            if (sensors.nightVision) {
+                cameraImage.style.filter = 'grayscale(100%) brightness(0.5) contrast(2)';
+            } else {
+                cameraImage.style.filter = 'none';
+            }
+        }
+        
+        function takeSnapshot() {
+            alert('Snapshot saved to gallery!');
+            // In a real app, this would save the image
+        }
+        
+        // Rotate camera images to simulate activity
+        function rotateCameraImage() {
+            if (!sensors.motion && sensors.sound < 500) {
+                cameraImage.src = babyImages[0]; // Sleeping
+            } else if (sensors.sound > 500 && sensors.sound < 800) {
+                cameraImage.src = babyImages[1]; // Awake
+            }
+        }
+        
+        // Panel navigation
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(panelId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Refresh sensor data manually
+        function refreshSensors() {
+            simulateSensorData();
+        }
+        
+        // Initialize
+        updateSensors();
+        
+        // Simulate data every 3-8 seconds
+        setInterval(simulateSensorData, Math.random() * 5000 + 3000);
+        
+        // Rotate camera imaage every 5-10 seconds
+        setInterval(rotateCameraImage, Math.random() * 5000 + 5000);
+        
+        // Initial demo alerts
+        setTimeout(() => createAlert('cry'), 1500);
+        setTimeout(() => createAlert('temp'), 4000);
+    </script> 
+ 
+</body></html>

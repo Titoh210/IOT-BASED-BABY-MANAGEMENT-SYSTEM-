@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT Baby Monitor Phone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .phone {
+      width: 320px;
+      height: 600px;
+      background: #1f1f1f;
+      border-radius: 30px;
+      border: 6px solid #333;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .status-bar {
+      height: 30px;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      color: #fff;
+      font-size: 0.9em;
+    }
+    .battery {
+      width: 24px;
+      height: 12px;
+      border: 2px solid #fff;
+      position: relative;
+      border-radius: 2px;
+    }
+    .battery::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: -6px;
+      width: 4px;
+      height: 6px;
+      background: #fff;
+      border-radius: 1px;
+    }
+    .battery-level {
+      background: limegreen;
+      height: 100%;
+      width: 70%;
+    }
+    .screen {
+      width: 100%;
+      height: calc(100% - 30px);
+      background: #111;
+      padding: 20px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .screen button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #667eea;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .screen button:hover {
+      background: #556cd6;
+    }
+    .popup {
+      position: absolute;
+      top: 30%;
+      left: 10%;
+      width: 80%;
+      padding: 20px;
+      background: #ff4444;
+      color: white;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 1.2em;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      animation: fadeInScale 1s ease forwards;
+      display: none;
+    }
+    .popup button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #fff;
+      color: #ff4444;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    @keyframes fadeInScale {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .popup.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span id="time">--:--</span>
+      <div class="battery">
+        <div class="battery-level"></div>
+      </div>
+    </div>
+    <div class="screen">
+      <h2>Baby Monitor</h2>
+      <p>Status: <span id="status">Waiting to start...</span></p>
+      <button onclick="startMonitoring()">Start Monitoring</button>
+    </div>
+    <div class="popup" id="popup"></div>
+  </div>
+
+  <audio id="ringtone" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <script>
+    const popup = document.getElementById("popup");
+    const ringtone = document.getElementById("ringtone");
+    const timeDisplay = document.getElementById("time");
+
+    const alerts = [
+      "Baby is Crying!",
+      "Room Temperature Too High!",
+      "Humidity Level Too Low!",
+      "Motion Detected in Baby's Crib!",
+      "Unknown Person Detected in Room!"
+    ];
+
+    let monitoringStarted = false;
+
+    function startMonitoring() {
+      monitoringStarted = true;
+      document.getElementById("status").textContent = "Monitoring...";
+
+      alerts.forEach((msg, index) => {
+        showPopup(msg, index * 8000 + 10000);
+      });
+    }
+
+    function updateTime() {
+      const now = new Date();
+      let h = now.getHours();
+      let m = now.getMinutes();
+      if (m < 10) m = "0" + m;
+      timeDisplay.textContent = `${h}:${m}`;
+    }
+
+    function showPopup(message, delay) {
+      setTimeout(() => {
+        if (!monitoringStarted) return;
+
+        popup.textContent = message;
+        popup.classList.add("show");
+
+        ringtone.currentTime = 0;
+        ringtone.play();
+
+        setTimeout(() => {
+          popup.classList.remove("show");
+        }, 5000);
+      }, delay);
+    }
+
+    updateTime();
+    setInterval(updateTime, 60000);
+  </script>
+
+</body></html>

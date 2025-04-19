@@ -1,0 +1,52 @@
+"version": 1,
+  "author": "Zefany Athalia",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir1",
+      "top": -34.4,
+      "left": -170.58,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": 96.3,
+      "left": -159,
+      "attrs": { "humidity": "48", "temperature": "20.9" }
+    },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -179.3, "left": -61.03, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 37.1, "left": -499.4, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot2", "top": 37.1, "left": -345.8, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "dht1:SDA", "esp:D12", "green", [ "v29.34", "h117.73", "v-108.67" ] ],
+    [ "dht1:GND", "esp:GND.2", "black", [ "v10", "h91.1", "v-70" ] ],
+    [ "dht1:VCC", "esp:VIN", "red", [ "v18.67", "h132.57", "v-72.67", "h-1.33" ] ],
+    [ "pir1:VCC", "esp:VIN", "red", [ "v20.13", "h99.37", "v84" ] ],
+    [ "pir1:GND", "esp:GND.2", "black", [ "v28.13", "h93.24", "v60.67", "h-0.67" ] ],
+    [ "pir1:OUT", "esp:D33", "green", [ "v0" ] ],
+    [ "lcd1:K", "esp:GND.1", "green", [ "v209.84", "h5.31" ] ],
+    [ "lcd1:A", "esp:VIN", "green", [ "v25.29", "h-137.6", "v192.81" ] ],
+    [ "lcd1:D7", "esp:D22", "green", [ "v42.74", "h13.79", "v38.1" ] ],
+    [ "lcd1:D6", "esp:D21", "green", [ "v38.6", "h38.9", "v69.78" ] ],
+    [ "lcd1:D5", "esp:D18", "green", [ "v44.57", "h56.2", "v87.22" ] ],
+    [ "lcd1:D4", "esp:D5", "green", [ "v47.79", "h72.13", "v89.52" ] ],
+    [ "lcd1:E", "esp:D15", "green", [ "v31.72", "h108.65", "v139.56" ] ],
+    [ "lcd1:RW", "esp:GND.2", "green", [ "v35.18", "h-36.13", "v161.74" ] ],
+    [ "lcd1:RS", "esp:D4", "green", [ "v44.11", "h157.66", "v103.45", "h-18.9", "v19.95" ] ],
+    [ "lcd1:VDD", "esp:VIN", "green", [ "v214.25", "h-8.18" ] ],
+    [ "lcd1:VSS", "esp:GND.2", "green", [ "v0" ] ],
+    [ "pot2:VCC", "esp:VIN", "red", [ "v0" ] ],
+    [ "pot2:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "pot1:VCC", "esp:VIN", "red", [ "v0" ] ],
+    [ "pot1:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "pot2:SIG", "esp:D35", "green", [ "v28.8", "h124.4", "v-201.6", "h115.2", "v124.8" ] ],
+    [ "pot1:SIG", "esp:D32", "green", [ "v28.8", "h86", "v-220.8", "h316.8", "v153.6" ] ]
+  ],
+  "dependencies": {}
+}

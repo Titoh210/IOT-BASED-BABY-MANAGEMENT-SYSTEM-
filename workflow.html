@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Baby Monitor Workflow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f7fa;
+        }
+        .diagram-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4361ee;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .step {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fff;
+            border: 2px solid #e1e5eb;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .step:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #4361ee;
+        }
+        .step.active {
+            border-color: #4361ee;
+            background: #f0f4ff;
+        }
+        .step-number {
+            position: absolute;
+            left: -15px;
+            top: -15px;
+            background: #4361ee;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        .step-details {
+            color: #666;
+            display: none;
+        }
+        .step.active .step-details {
+            display: block;
+        }
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #e1e5eb;
+            margin: 5px 0;
+        }
+        .arrow.active {
+            border-top-color: #4361ee;
+        }
+        .tech-badge {
+            display: inline-block;
+            background: #e1e5eb;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+        @media (max-width: 600px) {
+            .step {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1>IoT Baby Monitor Workflow</h1>
+        <div class="workflow">
+            <!-- Step 1 -->
+            <div class="step" onclick="toggleStep(1)">
+                <div class="step-number">1</div>
+                <div class="step-title">Sensor Detection</div>
+                <div class="step-details">
+                    <p>ESP32 microcontroller reads data from connected sensors:</p>
+                    <span class="tech-badge">Sound Sensor</span>
+                    <span class="tech-badge">DHT11 (Temp/Humidity)</span>
+                    <span class="tech-badge">Motion Sensor</span>
+                    <span class="tech-badge">Moisture Sensor</span>
+                </div>
+            </div>
+            
+            <div class="arrow" id="arrow1"></div>
+            
+            <!-- Step 2 -->
+            <div class="step" onclick="toggleStep(2)">
+                <div class="step-number">2</div>
+                <div class="step-title">Data Processing</div>
+                <div class="step-details">
+                    <p>Arduino code processes raw sensor data and checks against safety thresholds:</p>
+                    <ul>
+                        <li>Temperature &gt; 28°C → Warning</li>
+                        <li>Crying sound detected → Alert</li>
+                        <li>Diaper moisture &gt; 70% → Notification</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="arrow" id="arrow2"></div>
+            
+            <!-- Step 3 -->
+            <div class="step" onclick="toggleStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-title">Wireless Transmission</div>
+                <div class="step-details">
+                    <p>Processed data sent via:</p>
+                    <span class="tech-badge">Wi-Fi (HTTP/MQTT)</span>
+                    <span class="tech-badge">LoRa (Long Range)</span>
+                    <p>Data format: JSON payload with timestamp</p>
+                </div>
+            </div>
+            
+            <div class="arrow" id="arrow3"></div>
+            
+            <!-- Step 4 -->
+            <div class="step" onclick="toggleStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-title">Cloud Processing</div>
+                <div class="step-details">
+                    <p>Data received and processed by:</p>
+                    <span class="tech-badge">Firebase Realtime DB</span>
+                    <span class="tech-badge">Node-RED (Logic)</span>
+                    <p>Actions: Store data, trigger alerts, log events</p>
+                </div>
+            </div>
+            
+            <div class="arrow" id="arrow4"></div>
+            
+            <!-- Step 5 -->
+            <div class="step" onclick="toggleStep(5)">
+                <div class="step-number">5</div>
+                <div class="step-title">Parent Notification</div>
+                <div class="step-details">
+                    <p>Alerts delivered through:</p>
+                    <span class="tech-badge">Mobile App (Blynk)</span>
+                    <span class="tech-badge">SMS (Twilio)</span>
+                    <span class="tech-badge">Email</span>
+                    <p>Includes: Alert type, timestamp, recommended action</p>
+                </div>
+            </div>
+            
+            <div class="arrow" id="arrow5"></div>
+            
+            <!-- Step 6 -->
+            <div class="step" onclick="toggleStep(6)">
+                <div class="step-number">6</div>
+                <div class="step-title">Response &amp; History</div>
+                <div class="step-details">
+                    <p>System tracks:</p>
+                    <ul>
+                        <li>Parent acknowledgment</li>
+                        <li>Alert resolution time</li>
+                        <li>Historical trends (sleep patterns, temp changes)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleStep(stepNum) {
+            // Toggle active class on step
+            const step = document.querySelector(`.step:nth-child(${stepNum*2 - 1})`);
+            step.classList.toggle('active');
+            
+            // Toggle arrow color
+            const arrow = document.getElementById(`arrow${stepNum}`);
+            if (arrow) arrow.classList.toggle('active');
+        }
+        
+        // Auto-animate for demo purposes
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.step');
+        
+        function animateSteps() {
+            if (currentStep > 0) {
+                steps[currentStep-1].classList.remove('active');
+                const arrow = document.getElementById(`arrow${currentStep}`);
+                if (arrow) arrow.classList.remove('active');
+            }
+            
+            if (currentStep < steps.length) {
+                steps[currentStep].classList.add('active');
+                const arrow = document.getElementById(`arrow${currentStep+1}`);
+                if (arrow) arrow.classList.add('active');
+                currentStep++;
+            } else {
+                currentStep = 0;
+            }
+            
+            setTimeout(animateSteps, 2000);
+        }
+        
+        // Start animation after 1 second
+        setTimeout(animateSteps, 1000);
+    </script>
+
+</body></html>

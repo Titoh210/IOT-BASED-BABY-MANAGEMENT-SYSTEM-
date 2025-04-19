@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>IoT Baby Monitoring System</title> 
+  <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .diagram-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .block-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .block {
+            width: 150px;
+            height: 100px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .block i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .block.sensor {
+            background-color: #2ecc71;
+        }
+        
+        .block.audio {
+            background-color: #1abc9c;
+        }
+        
+        .block.processor {
+            background-color: #e74c3c;
+        }
+        
+        .block.cloud {
+            background-color: #9b59b6;
+        }
+        
+        .block.user {
+            background-color: #f39c12;
+        }
+        
+        .connector {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #34495e;
+            border-radius: 50%;
+            bottom: -30px;
+            z-index: 10;
+        }
+        
+        .connection-line {
+            position: absolute;
+            background-color: #7f8c8d;
+            height: 2px;
+            width: 100px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .connection-line.vertical {
+            width: 2px;
+            height: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+        }
+        
+        .connection-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #7f8c8d;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .connection-arrow.down {
+            border-top: none;
+            border-bottom: 12px solid #7f8c8d;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            right: auto;
+        }
+        
+        .processor-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .processor-connections {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+            
+            .block {
+     iko           margin-bottom: 50px;
+            }
+            
+            .connection-line.horizontal {
+                display: none;
+            }
+        }
+    </style> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+ </head> 
+ <body> 
+  <div class="diagram-container"> 
+   <h1>Smart IoT-Based Baby Monitoring System</h1> 
+   <h2 style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">System Block Diagram n</h2> 
+  <div class="block-diagram"> <!-- Sensor Row --> 
+    <div class="row"> 
+     <div class="block sensor"> <i class="fas fa-temperature-high"></i> 
+      <div>
+        DHT22 Sensor 
+      </div> 
+      <div>
+        (Temp/Humidity) 
+      </div> 
+     </div> 
+     <div class="block sensor"> <i class="fas fa-running"></i> 
+      <div>
+        PIR Motion 
+      </div> 
+      <div>
+        Sensor 
+      </div> 
+     </div> 
+     <div class="block audio"> <i class="fas fa-microphone-alt"></i> 
+      <div>
+        Sound Sensor 
+      </div> 
+      <div>
+        (Cry Detection) 
+      </div> 
+     </div> 
+     <div class="block sensor"> <i class="fas fa-video"></i> 
+      <div>
+        ESP32-CAM 
+      </div> 
+      <div>
+        (Video Feed) 
+      </div> 
+     </div> 
+    </div> <!-- Connection lines from sensors to processor --> 
+    <div style="position: relative; width: 100%; height: 50px; margin-bottom: 20px;"> 
+     <div style="position: absolute; left: 12%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 37%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 62%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 87%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 12%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+     <div style="position: absolute; left: 37%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+     <div style="position: absolute; left: 62%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+     <div style="position: absolute; left: 87%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+    </div> <!-- Processor Row --> 
+    <div class="processor-container"> 
+     <div class="block processor"> <i class="fas fa-microchip"></i> 
+      <div>
+        ESP32 
+      </div> 
+      <div>
+        Microcontroller 
+      </div> 
+      <div style="font-size: 10px; margin-top: 5px;">
+        (With Audio Processing) 
+      </div> 
+     </div> 
+    </div> <!-- Connection line from processor to cloud --> 
+    <div style="position: relative; width: 100%; height: 50px; margin-bottom: 20px;"> 
+     <div style="position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d; transform: translateX(-50%);"></div> 
+     <div style="position: absolute; left: 50%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+    </div> <!-- Cloud Row --> 
+    <div class="row"> 
+     <div class="block cloud"> <i class="fas fa-cloud"></i> 
+      <div>
+        Firebase 
+      </div> 
+      <div>
+        Cloud Database 
+      </div> 
+      <div style="font-size: 10px; margin-top: 5px;">
+        (Stores audio patterns) 
+      </div> 
+     </div> 
+    </div> <!-- Connection lines from cloud to users --> 
+    <div style="position: relative; width: 100%; height: 50px; margin-bottom: 20px;"> 
+     <div style="position: absolute; left: 30%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 70%; top: 0; width: 2px; height: 100%; background-color: #7f8c8d;"></div> 
+     <div style="position: absolute; left: 30%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+     <div style="position: absolute; left: 70%; top: 100%; transform: translateX(-50%); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #7f8c8d;"></div> 
+    </div> <!-- User Interface Row --> 
+    <div class="row"> 
+     <div class="block user"> <i class="fas fa-mobile-alt"></i> 
+      <div>
+        Mobile 
+      </div> 
+      <div>
+        Dashboard 
+      </div> 
+      <div style="font-size: 10px; margin-top: 5px;">
+        (Cry alerts) 
+      </div> 
+     </div> 
+     <div class="block user"> <i class="fas fa-envelope"></i> 
+      <div>
+        Email/SMS 
+      </div> 
+      <div>
+        Alerts 
+      </div> 
+     </div> 
+     <div class="block user"> <i class="fas fa-bell"></i> 
+      <div>
+        Audio 
+      </div> 
+      <div>
+        Notification 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div style="margin-top: 40px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;"> 
+    <h3 style="color: #2c3e50; margin-top: 0;">Key Updates:</h3> 
+    <ul> 
+     <li><strong>New Audio Sensor Block</strong> - Added dedicated sound detection module (green-teal color)</li> 
+     <li><strong>Enhanced Processor</strong> - Now shows audio processing capability</li> 
+     <li><strong>Cloud Storage</strong> - Indicates audio pattern storage</li> 
+     <li><strong>Additional Alert Method</strong> - Audio notification option added</li> 
+    </ul> 
+   </div> 
+  </div> 
+  <script>
+        // Enhanced animation with sequential delays
+        document.addEventListener('DOMContentLoaded', function() {
+            const blocks = document.querySelectorAll('.block');
+            const connectionLines = document.querySelectorAll('.connection-line, .connection-arrow');
+            
+            // Animate blocks with sequential delays
+            blocks.forEach((block, index) => {
+                block.style.opacity = '0';
+                block.style.transform = 'translateY(20px)';
+                block.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Animate connection lines after blocks
+            connectionLines.forEach((line, index) => {
+                line.style.opacity = '0';
+                line.style.animationDelay = `${blocks.length * 0.1 + index * 0.05}s`;
+            });
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.5s ease-out forwards';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            [...blocks, ...connectionLines].forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Add CSS animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .connection-line, .connection-arrow {
+                    animation: fadeInUp 0.5s ease-out forwards;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script> 
+ 
+</body></html>
